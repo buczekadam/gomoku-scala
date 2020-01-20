@@ -108,9 +108,7 @@ class Game {
       board.addCellToBoard(board.getEmptyCells().head, player)
     }
     val tree: Tree[Board] = createTree(player, board, possibleMoves)
-    type HelloWorld = (Int, Int)
-    val helloWorld: HelloWorld = getMaxBoard(3, player, tree)
-    tree.nodes(helloWorld._1).data
+    tree.nodes(getMaxBoard(3, player, tree)._1).data
   }
 
   private def getMaxBoard(depth: Int, player: Player, boardTree: Tree[Board]): (Int, Int) = {
@@ -121,8 +119,6 @@ class Game {
     val maxList: LazyList[Int] = boardTree.nodes.map(node => {
       getMinBoard(depth - 1, player, node)._2
     })
-    if (depth == 1) {
-    }
     (maxList.indexOf(maxList.max), maxList.max)
   }
 
