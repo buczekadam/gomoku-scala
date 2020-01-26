@@ -46,7 +46,7 @@ class Game {
   @tailrec
   private def rateCellsInDirection(rateSum: Int, vectorLength: Long, cell: Cell, cells: List[Cell], direction: (Int, Int)): Int = {
     if (cells.isEmpty) {
-      rateSum + Math.pow(16, vectorLength).toInt
+      rateSum + Math.pow(5, vectorLength).toInt
     } else if (cells.contains(cell)) {
       rateCellsInDirection(rateSum, vectorLength + 1, Cell(cell.x + direction._1, cell.y + direction._2), cells diff List(cell), direction)
     } else {
