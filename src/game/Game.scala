@@ -66,22 +66,24 @@ class Game {
     resultSum
   }
 
-  private def createTree(player: Player, board: Board, possibleMoves: List[Cell]): Tree[Board] = {
+  private def createTree(depth: Int, player: Player, board: Board, possibleMoves: List[Cell]): Tree[Board] = {
     var nodes: LazyList[Tree[Board]] = LazyList()
-    nodes = possibleMoves.to(LazyList).map(possibleMove => {
-      var newPossibleMoves: List[Cell] = possibleMoves diff List(possibleMove)
-      (-1 to 1).foreach(x => {
-        (-1 to 1).foreach(y => {
-          if (x != 0 || y != 0) {
-            val neighbour: Cell = Cell(possibleMove.x + x, possibleMove.y + y)
-            if (board.isCellCorrect(neighbour) && board.isCellEmpty(neighbour)) {
-              newPossibleMoves = (newPossibleMoves ++ List(neighbour)).distinct
+    if(depth > 0) {
+      nodes = possibleMoves.to(LazyList).map(possibleMove => {
+        var newPossibleMoves: List[Cell] = possibleMoves diff List(possibleMove)
+        (-1 to 1).foreach(x => {
+          (-1 to 1).foreach(y => {
+            if (x != 0 || y != 0) {
+              val neighbour: Cell = Cell(possibleMove.x + x, possibleMove.y + y)
+              if (board.isCellCorrect(neighbour) && board.isCellEmpty(neighbour)) {
+                newPossibleMoves = (newPossibleMoves ++ List(neighbour)).distinct
+              }
             }
-          }
+          })
         })
+        createTree(depth - 1, switchPlayer(player), board.newBoard(possibleMove, player), newPossibleMoves)
       })
-      createTree(switchPlayer(player), board.newBoard(possibleMove, player), newPossibleMoves)
-    })
+    }
     Tree(board, nodes)
   }
 
@@ -107,7 +109,7 @@ class Game {
     if (possibleMoves.isEmpty) {
       board.addCellToBoard(board.getEmptyCells().head, player)
     }
-    val tree: Tree[Board] = createTree(player, board, possibleMoves)
+    val tree: Tree[Board] = createTree(4, player, board, possibleMoves)
     tree.nodes(getMaxBoard(3, player, tree)._1).data
   }
 
